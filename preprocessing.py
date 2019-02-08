@@ -32,10 +32,14 @@ class Preprocessing():
             self.tweets_splitted.append(str_final.split())
             self.tweets_processed.append(str_final)
     
-    def Process_Class(self,keluhan):
-        for keluh in keluhan:
-            if (keluh == 'Ya'):
-                self.kelas.append(1)
+    def Process_Class(self,data_tweet):
+        i = 0
+        # print(data_tweet['Keluhan'])
+        for i in data_tweet.index:
+            if (data_tweet['Keluhan'][i] == 'Ya'):
+                self.kelas.append('Keluhan')
+            elif(data_tweet['Respon'][i] == 'Ya'):
+                self.kelas.append('Respon')
             else:
-                self.kelas.append(0)
-
+                self.kelas.append('Netral')
+        #     i+=1

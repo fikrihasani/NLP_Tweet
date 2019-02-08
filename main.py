@@ -3,6 +3,7 @@ from preprocessing import Preprocessing
 import pandas as pd
 from pandas import ExcelWriter
 from pandas import ExcelFile
+from classifier import Random_Forest,Naive_Bayes
 
 # main
 if __name__ == "__main__":
@@ -14,23 +15,15 @@ if __name__ == "__main__":
     columns = tw_data.columns
     # get tweet
     tweets = tw_data['Tweet']
-    # input class to array
-    prepro.Process_Class(tw_data['Keluhan'])
-    # cek
-    print(prepro.kelas)
-    # process tweet
+    # 
     prepro.Process_Tweet(tweets)
-    #cek isi data awal
-    print(tweets,"\n-----------------------------------------------------\n")
-    i = 0
-    # cek isi array
-    print("Processed array: ")
-    for tweet in prepro.tweets_processed:
-        print(str(i)+" - "+tweet+"\n")
-        i+=1
-    # cek isi array
-    print("Splitted Array: ")
-    i = 0
-    for tweet in prepro.tweets_splitted:
-        print(tweet)
-        i+=1
+    
+    # input class to array
+    prepro.Process_Class(tw_data)
+    # classify
+    rf = Naive_Bayes(tweets,prepro.kelas)
+    rf.train()
+    rf.classify(["@diskamtam bapak/ibu mau tanya, kalo pemeliharaan taman2 yg banyak dibagun skr gimana nantinya?"])
+
+
+ 
