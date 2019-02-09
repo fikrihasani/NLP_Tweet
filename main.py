@@ -52,13 +52,12 @@ if __name__ == "__main__":
     # inference
     ch = input("1. Input String dari Pengguna\n2. Input String dari file Text (inference.txt)\nMasukkan Pilihan anda: ")
     if ch == "1":
-        words = input("Masukkan kalimat untuk diklasifikasi: ")
-        # ini di uncomment aja yang mana yang mau dipake 
-        # print("klasifikasi dengan naive bayes: ")
-        # nb.classify(words)
-        # print("klasifikasi dengan random forest: ")
-        # rf.classify(words)
-        print("klasifikasi dengan SVM: ")
+        words = input("Masukkan kalimat untuk diklasifikasi: ") 
+        print("Klasifikasi dengan Naive Bayes: ")
+        nb.classify(words)
+        print("Klasifikasi dengan Random Forest: ")
+        rf.classify(words)
+        print("Klasifikasi dengan SVM: ")
         sv.classify(words)
     else:
         if os.path.exists("inference.txt"):
@@ -69,12 +68,11 @@ if __name__ == "__main__":
             # print(x)
             f.close() 
             for line in x:
-                # ini di uncomment aja yang mana yang mau dipake 
-                # print("klasifikasi dengan naive bayes: ")
-                # nb.classify(line)
-                # print("klasifikasi dengan random forest: ")
-                # rf.classify(line)
-                print("klasifikasi dengan SVM: ")
+                print("Klasifikasi dengan Naive Bayes: ")
+                nb.classify(line)
+                print("Klasifikasi dengan Random Forest: ")
+                rf.classify(line)
+                print("Klasifikasi dengan SVM: ")
                 sv.classify(line)
                 print()
 
