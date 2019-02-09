@@ -6,7 +6,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
-# ekstraksi fitur tf idf
+# Ekstraksi fitur TFIDF
 class Data_Processing:
     def __init__(self,tweet,kelas):
         self.tweet = tweet
@@ -20,40 +20,35 @@ class Data_Processing:
         print(confusion_matrix(y_test,y_pred))  
         print(classification_report(y_test,y_pred))  
 
-# naive bayes
+# Naive Bayes
 class Naive_Bayes:
-    def __init__(self,tweet,kelas):
-        self.tweet = tweet
-        self.kelas = kelas
+    def __init__(self,data):
         self.acc = 0
         self.model = None
         self.classifier = None
         self.pred = None
         self.vectorized = CountVectorizer()
         self.tf_idf = TfidfTransformer()
+        self.data = data
     
     def train(self):
-        # split data
-        fe = Data_Processing(self.tweet,self.kelas)
-        # set all feature
-        fe.set_all()
-        X_train_counts = self.vectorized.fit_transform(fe.X_train)
+        X_train_counts = self.vectorized.fit_transform(self.data.X_train)
 
         # ekstraksi fitur tf idf
         X_train_tfidf = self.tf_idf.fit_transform(X_train_counts)
         
         # train
         self.classifier = MultinomialNB()  
-        self.classifier.fit(X_train_tfidf, fe.y_train)
+        self.classifier.fit(X_train_tfidf, self.data.y_train)
 
         # test
-        X_test = self.vectorized.transform(fe.X_test)
+        X_test = self.vectorized.transform(self.data.X_test)
         X_test_tfidf = self.tf_idf.transform(X_test)
         self.y_pred = self.classifier.predict(X_test_tfidf) 
 
         # get accuracy 
-        self.acc = accuracy_score(fe.y_test, self.y_pred)
-        print("Akurasi naive bayes: ",self.acc)  
+        self.acc = accuracy_score(self.data.y_test, self.y_pred)
+        print("Akurasi Naive Bayes: ",self.acc)  
     
     def classify(self,docs):
         vectorized_docs = self.vectorized.transform([docs])
@@ -61,38 +56,32 @@ class Naive_Bayes:
         pred = self.classifier.predict(tfidf_docs)
         print("Hasil klasifikasi: ",docs,"\n",pred[0])
 
-# random forest
+# Random Forest
 class Random_Forest:
-    def __init__(self,tweet,kelas):
-        self.tweet = tweet
-        self.kelas = kelas
+    def __init__(self,data):
         self.acc = 0
         self.model = None
         self.classifier = None
         self.pred = None
         self.vectorized = CountVectorizer()
         self.tf_idf = TfidfTransformer()
+        self.data = data
 
     def train(self):
-        # split data
-        fe = Data_Processing(self.tweet,self.kelas)
-        
-        # set all feature
-        fe.set_all()
-        X_train_counts = self.vectorized.fit_transform(fe.X_train)
+        X_train_counts = self.vectorized.fit_transform(self.data.X_train)
 
         #ekstraksi fitur        
         X_train_tfidf = self.tf_idf.fit_transform(X_train_counts)
 
         # train
         self.classifier = RandomForestClassifier(n_estimators=1000, random_state=0)  
-        self.classifier.fit(X_train_tfidf, fe.y_train)
+        self.classifier.fit(X_train_tfidf, self.data.y_train)
 
         # testing
-        X_test = self.vectorized.transform(fe.X_test)
+        X_test = self.vectorized.transform(self.data.X_test)
         X_test_tfidf = self.tf_idf.transform(X_test)
         self.y_pred = self.classifier.predict(X_test_tfidf) 
-        self.acc = accuracy_score(fe.y_test, self.y_pred)
+        self.acc = accuracy_score(self.data.y_test, self.y_pred)
         print("Akurasi Random Forest: ",self.acc)  
 
     def classify(self,docs):
@@ -103,36 +92,30 @@ class Random_Forest:
 
 # random forest
 class Support_Vector:
-    def __init__(self,tweet,kelas):
-        self.tweet = tweet
-        self.kelas = kelas
+    def __init__(self,data):
         self.acc = 0
         self.model = None
         self.classifier = None
         self.pred = None
         self.vectorized = CountVectorizer()
         self.tf_idf = TfidfTransformer()
+        self.data = data
 
     def train(self):
-        # split data
-        fe = Data_Processing(self.tweet,self.kelas)
-        
-        # set all feature
-        fe.set_all()
-        X_train_counts = self.vectorized.fit_transform(fe.X_train)
+        X_train_counts = self.vectorized.fit_transform(self.data.X_train)
 
         #ekstraksi fitur        
         X_train_tfidf = self.tf_idf.fit_transform(X_train_counts)
 
         # train
         self.classifier = SVC(kernel="linear")  
-        self.classifier.fit(X_train_tfidf, fe.y_train)
+        self.classifier.fit(X_train_tfidf, self.data.y_train)
 
         # testing
-        X_test = self.vectorized.transform(fe.X_test)
+        X_test = self.vectorized.transform(self.data.X_test)
         X_test_tfidf = self.tf_idf.transform(X_test)
         self.y_pred = self.classifier.predict(X_test_tfidf) 
-        self.acc = accuracy_score(fe.y_test, self.y_pred)
+        self.acc = accuracy_score(self.data.y_test, self.y_pred)
         print("Akurasi SVM: ",self.acc)  
 
     def classify(self,docs):

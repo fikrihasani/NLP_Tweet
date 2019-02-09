@@ -4,6 +4,7 @@ import pandas as pd
 from pandas import ExcelWriter
 from pandas import ExcelFile
 from classifier import Random_Forest,Naive_Bayes,Support_Vector
+from classifier import Data_Processing
 
 # main
 if __name__ == "__main__":
@@ -16,16 +17,23 @@ if __name__ == "__main__":
     # get tweet
     tweets = tw_data['Tweet']
     # preprocessing tweet data
-    # prepro.Process_Tweet(tweets)
+    prepro.Process_Tweet(tweets)
     
     # input class to array
     prepro.Process_Class(tw_data)
     # print(prepro.kelas.size)
+
+    # split data
+    data = Data_Processing(tweets,prepro.kelas)
+    # set all feature
+    data.set_all()
+
     # classify (cl stand for classifier)
-    cl = Support_Vector(tweets,prepro.kelas)
+    cl = Naive_Bayes(data)
+    cl.train()
+    cl = Random_Forest(data)
+    cl.train()
+    cl = Support_Vector(data)
     cl.train()
     # inference 
     # rf.classify("@ridwankamil @dbmpkotabdg kang teman saya tertimpa pohn dijln sangkuriang dpn polsek coblong tlg ditertibkan phn yg sdh lapuknuhun")
-
-
- 
