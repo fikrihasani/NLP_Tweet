@@ -102,7 +102,7 @@ class Random_Forest:
         X_train_tfidf = self.tf_idf.fit_transform(X_train_counts)
 
         # train
-        self.classifier = RandomForestClassifier(n_estimators=1000, random_state=0)  
+        self.classifier = RandomForestClassifier(n_estimators=100, random_state=0)  
         self.classifier.fit(X_train_tfidf, self.data.y_train)
 
         # save to pickle

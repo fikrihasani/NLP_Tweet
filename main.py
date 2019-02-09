@@ -50,7 +50,7 @@ if __name__ == "__main__":
         train_classifier()
    
     # inference
-    ch = input("1. Input String dari Pengguna\n2. Input String dari file Text (inference.txt)\nMasukkan Pilihan anda: ")
+    ch = input("\nPilihan:\n1. Input String dari Pengguna\n2. Input String dari file Text (inference.txt)\n3. Exit\nMasukkan Pilihan anda: ")
     if ch == "1":
         words = input("Masukkan kalimat untuk diklasifikasi: ") 
         print("Klasifikasi dengan Naive Bayes: ")
@@ -59,7 +59,7 @@ if __name__ == "__main__":
         rf.classify(words)
         print("Klasifikasi dengan SVM: ")
         sv.classify(words)
-    else:
+    elif ch == '2':
         if os.path.exists("inference.txt"):
             f = open('inference.txt','r')
             x = f.read()
@@ -75,4 +75,6 @@ if __name__ == "__main__":
                 print("Klasifikasi dengan SVM: ")
                 sv.classify(line)
                 print()
+    elif ch == '3':
+        SystemExit()
 
