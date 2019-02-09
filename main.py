@@ -35,5 +35,7 @@ if __name__ == "__main__":
     cl.train()
     cl = Support_Vector(data)
     cl.train()
+    
     # inference 
-    # rf.classify("@ridwankamil @dbmpkotabdg kang teman saya tertimpa pohn dijln sangkuriang dpn polsek coblong tlg ditertibkan phn yg sdh lapuknuhun")
+    # cl.classify("@ridwankamil @dbmpkotabdg kang teman saya tertimpa pohn dijln sangkuriang dpn polsek coblong tlg ditertibkan phn yg sdh lapuknuhun")
+    cl.classify('RT @dbmpkotabdg: @ridwankamil @OdedMD @yossiirianto @DiskominfoBdg 21/12 URC Cibeunying,  pengerukan saluran jl Veteran - jl Sunda')

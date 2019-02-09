@@ -5,6 +5,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+import pickle, os
 
 # Ekstraksi fitur TFIDF
 class Data_Processing:
@@ -32,14 +33,29 @@ class Naive_Bayes:
         self.data = data
     
     def train(self):
-        X_train_counts = self.vectorized.fit_transform(self.data.X_train)
+        filenameModel = 'NaiveBayes_model.sav'
+        filenameVector = 'NaiveBayes_vector.sav'
+        filenameTFIDF = 'NaiveBayes_tfidf.sav'
 
-        # ekstraksi fitur tf idf
-        X_train_tfidf = self.tf_idf.fit_transform(X_train_counts)
+        if os.path.exists('./'+filenameModel):
+            # load from pickle
+            self.classifier = pickle.load(open(filenameModel, 'rb'))
+            self.vectorized = pickle.load(open(filenameVector, 'rb'))
+            self.tf_idf = pickle.load(open(filenameTFIDF, 'rb'))
+        else:
+            X_train_counts = self.vectorized.fit_transform(self.data.X_train)
+
+            # ekstraksi fitur tf idf
+            X_train_tfidf = self.tf_idf.fit_transform(X_train_counts)
         
-        # train
-        self.classifier = MultinomialNB()  
-        self.classifier.fit(X_train_tfidf, self.data.y_train)
+            # train
+            self.classifier = MultinomialNB()  
+            self.classifier.fit(X_train_tfidf, self.data.y_train)
+
+            # save to pickle
+            pickle.dump(self.classifier, open(filenameModel, 'wb'))
+            pickle.dump(self.vectorized, open(filenameVector, 'wb'))
+            pickle.dump(self.tf_idf, open(filenameTFIDF, 'wb'))
 
         # test
         X_test = self.vectorized.transform(self.data.X_test)
@@ -68,14 +84,29 @@ class Random_Forest:
         self.data = data
 
     def train(self):
-        X_train_counts = self.vectorized.fit_transform(self.data.X_train)
+        filename = 'RandomForest_model.sav'
+        filenameVector = 'RandomForest_vector.sav'
+        filenameTFIDF = 'RandomForest_tfidf.sav'
 
-        #ekstraksi fitur        
-        X_train_tfidf = self.tf_idf.fit_transform(X_train_counts)
+        if os.path.exists('./'+filename):
+            # load from pickle
+            self.classifier = pickle.load(open(filename, 'rb'))
+            self.vectorized = pickle.load(open(filenameVector, 'rb'))
+            self.tf_idf = pickle.load(open(filenameTFIDF, 'rb'))
+        else:
+            X_train_counts = self.vectorized.fit_transform(self.data.X_train)
 
-        # train
-        self.classifier = RandomForestClassifier(n_estimators=1000, random_state=0)  
-        self.classifier.fit(X_train_tfidf, self.data.y_train)
+            #ekstraksi fitur        
+            X_train_tfidf = self.tf_idf.fit_transform(X_train_counts)
+
+            # train
+            self.classifier = RandomForestClassifier(n_estimators=1000, random_state=0)  
+            self.classifier.fit(X_train_tfidf, self.data.y_train)
+
+            # save to pickle
+            pickle.dump(self.classifier, open(filename, 'wb'))
+            pickle.dump(self.vectorized, open(filenameVector, 'wb'))
+            pickle.dump(self.tf_idf, open(filenameTFIDF, 'wb'))
 
         # testing
         X_test = self.vectorized.transform(self.data.X_test)
@@ -102,14 +133,29 @@ class Support_Vector:
         self.data = data
 
     def train(self):
-        X_train_counts = self.vectorized.fit_transform(self.data.X_train)
+        filename = 'SupportVector_model.sav'
+        filenameVector = 'SupportVector_vector.sav'
+        filenameTFIDF = 'SupportVector_tfidf.sav'
 
-        #ekstraksi fitur        
-        X_train_tfidf = self.tf_idf.fit_transform(X_train_counts)
+        if os.path.exists('./'+filename):
+            # load from pickle
+            self.classifier = pickle.load(open(filename, 'rb'))
+            self.vectorized = pickle.load(open(filenameVector, 'rb'))
+            self.tf_idf = pickle.load(open(filenameTFIDF, 'rb'))
+        else:
+            X_train_counts = self.vectorized.fit_transform(self.data.X_train)
 
-        # train
-        self.classifier = SVC(kernel="linear")  
-        self.classifier.fit(X_train_tfidf, self.data.y_train)
+            #ekstraksi fitur        
+            X_train_tfidf = self.tf_idf.fit_transform(X_train_counts)
+
+            # train
+            self.classifier = SVC(kernel="linear")  
+            self.classifier.fit(X_train_tfidf, self.data.y_train)
+
+            # save to pickle
+            pickle.dump(self.classifier, open(filename, 'wb'))
+            pickle.dump(self.vectorized, open(filenameVector, 'wb'))
+            pickle.dump(self.tf_idf, open(filenameTFIDF, 'wb'))
 
         # testing
         X_test = self.vectorized.transform(self.data.X_test)
