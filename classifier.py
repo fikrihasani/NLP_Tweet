@@ -23,39 +23,40 @@ class Data_Processing:
 
 # Naive Bayes
 class Naive_Bayes:
-    def __init__(self,data):
+    def __init__(self):
         self.acc = 0
         self.model = None
         self.classifier = None
         self.pred = None
         self.vectorized = CountVectorizer()
         self.tf_idf = TfidfTransformer()
-        self.data = data
+        self.data = None
+        self.filenameModel = 'NaiveBayes_model.sav'
+        self.filenameVector = 'NaiveBayes_vector.sav'
+        self.filenameTFIDF = 'NaiveBayes_tfidf.sav'
     
-    def train(self):
-        filenameModel = 'NaiveBayes_model.sav'
-        filenameVector = 'NaiveBayes_vector.sav'
-        filenameTFIDF = 'NaiveBayes_tfidf.sav'
+    def load_data(self):
+        print("load model from file .........................")
+        self.classifier = pickle.load(open('Model/'+self.filenameModel, 'rb'))
+        self.vectorized = pickle.load(open('Model/'+self.filenameVector, 'rb'))
+        self.tf_idf = pickle.load(open('Model/'+self.filenameTFIDF, 'rb'))
+    
+    def train(self,data):
+        self.data = data
+        X_train_counts = self.vectorized.fit_transform(self.data.X_train)
 
-        if os.path.exists('./'+filenameModel):
-            # load from pickle
-            self.classifier = pickle.load(open(filenameModel, 'rb'))
-            self.vectorized = pickle.load(open(filenameVector, 'rb'))
-            self.tf_idf = pickle.load(open(filenameTFIDF, 'rb'))
-        else:
-            X_train_counts = self.vectorized.fit_transform(self.data.X_train)
-
-            # feature extraction
-            X_train_tfidf = self.tf_idf.fit_transform(X_train_counts)
+        # feature extraction
+        X_train_tfidf = self.tf_idf.fit_transform(X_train_counts)
         
-            # train
-            self.classifier = MultinomialNB()  
-            self.classifier.fit(X_train_tfidf, self.data.y_train)
+        # train
+        self.classifier = MultinomialNB()  
+        self.classifier.fit(X_train_tfidf, self.data.y_train)
 
-            # save to pickle
-            pickle.dump(self.classifier, open(filenameModel, 'wb'))
-            pickle.dump(self.vectorized, open(filenameVector, 'wb'))
-            pickle.dump(self.tf_idf, open(filenameTFIDF, 'wb'))
+        # save to pickle
+        print("Save model to file ............................")
+        pickle.dump(self.classifier, open('Model/'+self.filenameModel, 'wb'))
+        pickle.dump(self.vectorized, open('Model/'+self.filenameVector, 'wb'))
+        pickle.dump(self.tf_idf, open('Model/'+self.filenameTFIDF, 'wb'))
 
         # test
         X_test = self.vectorized.transform(self.data.X_test)
@@ -64,7 +65,7 @@ class Naive_Bayes:
 
         # get accuracy 
         self.acc = accuracy_score(self.data.y_test, self.y_pred)
-        print("Akurasi Naive Bayes: ",self.acc)  
+        print("Akurasi Naive Bayes: ",self.acc,"\n")  
     
     def classify(self,docs):
         vectorized_docs = self.vectorized.transform([docs])
@@ -74,46 +75,48 @@ class Naive_Bayes:
 
 # Random Forest
 class Random_Forest:
-    def __init__(self,data):
+    def __init__(self):
         self.acc = 0
         self.model = None
         self.classifier = None
         self.pred = None
         self.vectorized = CountVectorizer()
         self.tf_idf = TfidfTransformer()
+        self.data = None
+        self.filenameModel = 'RandomForest_model.sav'
+        self.filenameVector = 'RandomForest_vector.sav'
+        self.filenameTFIDF = 'RandomForest_tfidf.sav'
+
+    def load_data(self):
+        print("load model from file .........................")
+        self.classifier = pickle.load(open('Model/'+self.filenameModel, 'rb'))
+        self.vectorized = pickle.load(open('Model/'+self.filenameVector, 'rb'))
+        self.tf_idf = pickle.load(open('Model/'+self.filenameTFIDF, 'rb'))
+    
+    def train(self,data):
         self.data = data
 
-    def train(self):
-        filenameModel = 'RandomForest_model.sav'
-        filenameVector = 'RandomForest_vector.sav'
-        filenameTFIDF = 'RandomForest_tfidf.sav'
+        X_train_counts = self.vectorized.fit_transform(self.data.X_train)
 
-        if os.path.exists('./'+filenameModel):
-            # load from pickle
-            self.classifier = pickle.load(open(filenameModel, 'rb'))
-            self.vectorized = pickle.load(open(filenameVector, 'rb'))
-            self.tf_idf = pickle.load(open(filenameTFIDF, 'rb'))
-        else:
-            X_train_counts = self.vectorized.fit_transform(self.data.X_train)
+        # feature extraction        
+        X_train_tfidf = self.tf_idf.fit_transform(X_train_counts)
 
-            # feature extraction        
-            X_train_tfidf = self.tf_idf.fit_transform(X_train_counts)
+        # train
+        self.classifier = RandomForestClassifier(n_estimators=1000, random_state=0)  
+        self.classifier.fit(X_train_tfidf, self.data.y_train)
 
-            # train
-            self.classifier = RandomForestClassifier(n_estimators=1000, random_state=0)  
-            self.classifier.fit(X_train_tfidf, self.data.y_train)
-
-            # save to pickle
-            pickle.dump(self.classifier, open(filenameModel, 'wb'))
-            pickle.dump(self.vectorized, open(filenameVector, 'wb'))
-            pickle.dump(self.tf_idf, open(filenameTFIDF, 'wb'))
+        # save to pickle
+        print("Save model to file ............................")
+        pickle.dump(self.classifier, open('Model/'+self.filenameModel, 'wb'))
+        pickle.dump(self.vectorized, open('Model/'+self.filenameVector, 'wb'))
+        pickle.dump(self.tf_idf, open('Model/'+self.filenameTFIDF, 'wb'))
 
         # testing
         X_test = self.vectorized.transform(self.data.X_test)
         X_test_tfidf = self.tf_idf.transform(X_test)
         self.y_pred = self.classifier.predict(X_test_tfidf) 
         self.acc = accuracy_score(self.data.y_test, self.y_pred)
-        print("Akurasi Random Forest: ",self.acc)  
+        print("Akurasi Random Forest: ",self.acc,"\n")  
 
     def classify(self,docs):
         vectorized_docs = self.vectorized.transform([docs])
@@ -123,39 +126,41 @@ class Random_Forest:
 
 # Support Vector
 class Support_Vector:
-    def __init__(self,data):
+    def __init__(self):
         self.acc = 0
         self.model = None
         self.classifier = None
         self.pred = None
         self.vectorized = CountVectorizer()
         self.tf_idf = TfidfTransformer()
+        self.data = None
+        self.filenameModel = 'SupportVector_model.sav'
+        self.filenameVector = 'SupportVector_vector.sav'
+        self.filenameTFIDF = 'SupportVector_tfidf.sav'
+
+    def load_data(self):
+        print("load model from file .........................")
+        self.classifier = pickle.load(open('Model/'+self.filenameModel, 'rb'))
+        self.vectorized = pickle.load(open('Model/'+self.filenameVector, 'rb'))
+        self.tf_idf = pickle.load(open('Model/'+self.filenameTFIDF, 'rb'))
+    
+    def train(self,data):
         self.data = data
 
-    def train(self):
-        filenameModel = 'SupportVector_model.sav'
-        filenameVector = 'SupportVector_vector.sav'
-        filenameTFIDF = 'SupportVector_tfidf.sav'
+        X_train_counts = self.vectorized.fit_transform(self.data.X_train)
 
-        if os.path.exists('./'+filenameModel):
-            # load from pickle
-            self.classifier = pickle.load(open(filenameModel, 'rb'))
-            self.vectorized = pickle.load(open(filenameVector, 'rb'))
-            self.tf_idf = pickle.load(open(filenameTFIDF, 'rb'))
-        else:
-            X_train_counts = self.vectorized.fit_transform(self.data.X_train)
+        # feature extraction       
+        X_train_tfidf = self.tf_idf.fit_transform(X_train_counts)
 
-            # feature extraction       
-            X_train_tfidf = self.tf_idf.fit_transform(X_train_counts)
+        # train
+        self.classifier = SVC(kernel="linear")  
+        self.classifier.fit(X_train_tfidf, self.data.y_train)
 
-            # train
-            self.classifier = SVC(kernel="linear")  
-            self.classifier.fit(X_train_tfidf, self.data.y_train)
-
-            # save to pickle
-            pickle.dump(self.classifier, open(filenameModel, 'wb'))
-            pickle.dump(self.vectorized, open(filenameVector, 'wb'))
-            pickle.dump(self.tf_idf, open(filenameTFIDF, 'wb'))
+        # save to pickle
+        print("Save model to file ...........................")
+        pickle.dump(self.classifier, open('Model/'+self.filenameModel, 'wb'))
+        pickle.dump(self.vectorized, open('Model/'+self.filenameVector, 'wb'))
+        pickle.dump(self.tf_idf, open('Model/'+self.filenameTFIDF, 'wb'))
 
         # testing
         X_test = self.vectorized.transform(self.data.X_test)
