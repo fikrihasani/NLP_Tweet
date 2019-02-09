@@ -45,7 +45,7 @@ class Naive_Bayes:
         else:
             X_train_counts = self.vectorized.fit_transform(self.data.X_train)
 
-            # ekstraksi fitur tf idf
+            # feature extraction
             X_train_tfidf = self.tf_idf.fit_transform(X_train_counts)
         
             # train
@@ -84,19 +84,19 @@ class Random_Forest:
         self.data = data
 
     def train(self):
-        filename = 'RandomForest_model.sav'
+        filenameModel = 'RandomForest_model.sav'
         filenameVector = 'RandomForest_vector.sav'
         filenameTFIDF = 'RandomForest_tfidf.sav'
 
-        if os.path.exists('./'+filename):
+        if os.path.exists('./'+filenameModel):
             # load from pickle
-            self.classifier = pickle.load(open(filename, 'rb'))
+            self.classifier = pickle.load(open(filenameModel, 'rb'))
             self.vectorized = pickle.load(open(filenameVector, 'rb'))
             self.tf_idf = pickle.load(open(filenameTFIDF, 'rb'))
         else:
             X_train_counts = self.vectorized.fit_transform(self.data.X_train)
 
-            #ekstraksi fitur        
+            # feature extraction        
             X_train_tfidf = self.tf_idf.fit_transform(X_train_counts)
 
             # train
@@ -104,7 +104,7 @@ class Random_Forest:
             self.classifier.fit(X_train_tfidf, self.data.y_train)
 
             # save to pickle
-            pickle.dump(self.classifier, open(filename, 'wb'))
+            pickle.dump(self.classifier, open(filenameModel, 'wb'))
             pickle.dump(self.vectorized, open(filenameVector, 'wb'))
             pickle.dump(self.tf_idf, open(filenameTFIDF, 'wb'))
 
@@ -121,7 +121,7 @@ class Random_Forest:
         pred = self.classifier.predict(tfidf_docs)
         print("Hasil klasifikasi: ",docs,"\n",pred[0])
 
-# random forest
+# Support Vector
 class Support_Vector:
     def __init__(self,data):
         self.acc = 0
@@ -133,19 +133,19 @@ class Support_Vector:
         self.data = data
 
     def train(self):
-        filename = 'SupportVector_model.sav'
+        filenameModel = 'SupportVector_model.sav'
         filenameVector = 'SupportVector_vector.sav'
         filenameTFIDF = 'SupportVector_tfidf.sav'
 
-        if os.path.exists('./'+filename):
+        if os.path.exists('./'+filenameModel):
             # load from pickle
-            self.classifier = pickle.load(open(filename, 'rb'))
+            self.classifier = pickle.load(open(filenameModel, 'rb'))
             self.vectorized = pickle.load(open(filenameVector, 'rb'))
             self.tf_idf = pickle.load(open(filenameTFIDF, 'rb'))
         else:
             X_train_counts = self.vectorized.fit_transform(self.data.X_train)
 
-            #ekstraksi fitur        
+            # feature extraction       
             X_train_tfidf = self.tf_idf.fit_transform(X_train_counts)
 
             # train
@@ -153,7 +153,7 @@ class Support_Vector:
             self.classifier.fit(X_train_tfidf, self.data.y_train)
 
             # save to pickle
-            pickle.dump(self.classifier, open(filename, 'wb'))
+            pickle.dump(self.classifier, open(filenameModel, 'wb'))
             pickle.dump(self.vectorized, open(filenameVector, 'wb'))
             pickle.dump(self.tf_idf, open(filenameTFIDF, 'wb'))
 
